@@ -1,9 +1,14 @@
 package com.example.listviewdemo
 
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
+import android.widget.BaseAdapter
 import android.widget.ListView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.listviewdemo.databinding.ActivityMainBinding
+import com.example.listviewdemo.databinding.ListItemBinding
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,11 +37,35 @@ class MainActivity : AppCompatActivity() {
             R.drawable.dice6,
         )
 
+        listView.adapter = MyAdapter()
+
+        listView.setOnItemClickListener { parent, view, position, id ->
+            Toast.makeText(this, "Es wurde der Würfel ${textArray[position]}", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
-    private inner class MyAdapter{ // ohne deklaration als inner ist es eine nested class ohne Zugriff auf die äußere Klasse
-        val size = textArray.size
+    private inner class MyAdapter : BaseAdapter(){ // ohne deklaration als inner ist es eine nested class ohne Zugriff auf die äußere Klasse
+        val counter = textArray.size
 
+        override fun getCount(): Int {
+            return counter
+        }
+
+        override fun getItem(position: Int): Any {
+            return  textArray[position]
+        }
+
+        override fun getItemId(position: Int): Long {
+            return position.toLong()
+        }
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            val itemView = ListItemBinding.inflate(layoutInflater)
+            itemView.tvImageDesc.text = textArray[position]
+            itemView.imageView.setImageResource(imageArray[position])
+            return itemView.root
+        }
     }
 }
 
